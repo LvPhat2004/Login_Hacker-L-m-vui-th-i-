@@ -46,8 +46,7 @@ open index.html
 
 ## **Tùy Chỉnh**  
 Bạn có thể chỉnh sửa trực tiếp trong các tệp sau:  
-- **HTML**: `index.html`, `login.html`.  
-- **CSS**: `styles.css`.  
+- **HTML**: `index.html`, `login.html`.   
 
 ---
 
