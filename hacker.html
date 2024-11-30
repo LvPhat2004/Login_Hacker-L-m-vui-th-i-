@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        body {
+            background: #000;
+            color: #0f0;
+            overflow: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            grid-template-rows: 60px 1fr 200px;
+            height: 100vh;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .panel {
+            border: 1px solid #0f0;
+            background: rgba(0, 20, 0, 0.3);
+            padding: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: #0f0;
+            animation: scanline 3s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 1.2em;
+            text-shadow: 0 0 10px #0f0;
+        }
+
+        .main-display {
+            grid-row: 2 / 3;
+            grid-column: 2 / 3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .side-panel {
+            font-size: 0.8em;
+        }
+
+        .status-bar {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 50, 0, 0.3);
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: #0f0;
+            transition: width 0.5s ease;
+        }
+
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .hack-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .hack-log {
+            flex: 1;
+            background: rgba(0, 20, 0, 0.3);
+            padding: 10px;
+            font-size: 0.8em;
+            overflow-y: auto;
+            font-family: 'Share Tech Mono', monospace;
+            text-align: left;
+        }
+
+        .hack-log div {
+            margin: 5px 0;
+        }
+
+        .hack-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .globe-container {
+            width: 100%;
+            height: 200px;
+            position: relative;
+        }
+
+        .network-stats {
+            margin-top: 10px;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        .success {
+            color: #0f0;
+        }
+
+        .warning {
+            color: #ff0;
+        }
+
+        .error {
+            color: #f00;
+        }
+
+        .hack-log::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .hack-log::-webkit-scrollbar-track {
+            background: rgba(0, 20, 0, 0.3);
+        }
+
+        .hack-log::-webkit-scrollbar-thumb {
+            background: #0f0;
+        }
+    </style>
+</head>
+<body>
+    <canvas class="matrix-rain"></canvas>
+    <div class="container">
+        <header class="panel header">
+            <div>SYSTEM STATUS: <span class="blink">ACTIVE</span></div>
+            <div>SECURITY LEVEL: MAXIMUM</div>
+            <div id="clock">00:00:00</div>
+        </header>
+
+        <aside class="panel side-panel">
+            <h3>GLOBAL NETWORK</h3>
+            <div class="globe-container"></div>
+            <div class="network-stats">
+                <div>CONNECTIONS: <span id="connections">0</span></div>
+                <div>PACKETS: <span id="packets">0</span></div>
+            </div>
+        </aside>
+
+        <main class="panel main-display">
+            <div class="hack-container">
+                <h2>SYSTEM BREACH IN PROGRESS</h2>
+                <div id="hack-log" class="hack-log"></div>
+                <div class="hack-status">
+                    <div class="progress-bar">
+                        <div class="progress"></div>
+                    </div>
+                    <div id="hack-percentage">0%</div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="panel side-panel">
+            <h3>ACTIVE PROCESSES</h3>
+            <div id="processes"></div>
+        </aside>
+
+        <footer class="panel status-bar">
+            <div>CONNECTION: SECURE</div>
+            <div>ENCRYPTION: ENABLED</div>
+            <div>THREAT LEVEL: LOW</div>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Matrix Rain Effect
+        const canvas = document.querySelector('.matrix-rain');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#0f0';
+            ctx.font = `${fontSize}px monospace`;
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        // Digital Clock
+        function updateClock() {
+            const now = new Date();
+            const time = now.toTimeString().split(' ')[0];
+            document.getElementById('clock').textContent = time;
+        }
+
+        // Random Process Generator
+        function updateProcesses() {
+            const processes = [
+                'kernel32.exe',
+                'system.dll',
+                'network.sys',
+                'security.exe',
+                'encryption.dll'
+            ];
+            const list = processes
+                .map(p => `<div>${p} [PID: ${Math.floor(Math.random() * 9999)}]</div>`)
+                .join('');
+            document.getElementById('processes').innerHTML = list;
+        }
+
+        // 3D Globe
+        const globeContainer = document.querySelector('.globe-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, globeContainer.clientWidth / globeContainer.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(globeContainer.clientWidth, globeContainer.clientHeight);
+        globeContainer.appendChild(renderer.domElement);
+
+        const geometry = new THREE.SphereGeometry(1, 32, 32);
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+        const globe = new THREE.Mesh(geometry, material);
+        scene.add(globe);
+
+        camera.position.z = 3;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            globe.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+
+        // Hack simulation
+        const hackPhrases = [
+            "Bypassing firewall...",
+            "Injecting SQL payload...",
+            "Cracking encryption...",
+            "Accessing mainframe...",
+            "Downloading sensitive data...",
+            "Bypassing security protocols...",
+            "Establishing backdoor connection...",
+            "Intercepting network traffic...",
+            "Deploying rootkit...",
+            "Erasing traces..."
+        ];
+
+        const hackLog = document.getElementById('hack-log');
+        const hackPercentage = document.getElementById('hack-percentage');
+        let currentHackProgress = 0;
+
+        function addHackLog(message, type = 'normal') {
+            const div = document.createElement('div');
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            div.className = type;
+            hackLog.appendChild(div);
+            hackLog.scrollTop = hackLog.scrollHeight;
+        }
+
+        function simulateHacking() {
+            if (currentHackProgress < 100) {
+                currentHackProgress += Math.random() * 5;
+                if (currentHackProgress > 100) currentHackProgress = 100;
+                
+                hackPercentage.textContent = `${Math.floor(currentHackProgress)}%`;
+                document.querySelector('.progress').style.width = `${currentHackProgress}%`;
+                
+                if (Math.random() > 0.7) {
+                    const randomPhrase = hackPhrases[Math.floor(Math.random() * hackPhrases.length)];
+                    const type = Math.random() > 0.8 ? 'warning' : 'success';
+                    addHackLog(randomPhrase, type);
+                }
+                
+                if (Math.random() > 0.95) {
+                    addHackLog('Access denied. Retrying...', 'error');
+                }
+                
+                setTimeout(simulateHacking, Math.random() * 1000 + 500);
+            } else {
+                addHackLog('System successfully compromised!', 'success');
+                setTimeout(() => {
+                    currentHackProgress = 0;
+                    hackLog.innerHTML = '';
+                    simulateHacking();
+                }, 5000);
+            }
+        }
+
+        // Network statistics
+        function updateNetworkStats() {
+            const connections = document.getElementById('connections');
+            const packets = document.getElementById('packets');
+            
+            connections.textContent = Math.floor(Math.random() * 100);
+            packets.textContent = Math.floor(Math.random() * 10000);
+        }
+
+        // Initialize all animations
+        setInterval(drawMatrix, 50);
+        setInterval(updateClock, 1000);
+        setInterval(updateProcesses, 3000);
+        setInterval(updateNetworkStats, 1000);
+
+        // Start all animations
+        updateClock();
+        updateProcesses();
+        animate();
+        simulateHacking();
+    </script>
+</body>
+</html>

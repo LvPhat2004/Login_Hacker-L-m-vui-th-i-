@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Login Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;  /* Nền đen */
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .login-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 20, 0, 0.7);
+            border: 1px solid #0f0;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 400px;
+            perspective: 1500px;
+            transform-style: preserve-3d;
+            animation: glowPulse 2s infinite;
+        }
+
+        @keyframes glowPulse {
+            0% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.2); }
+            50% { box-shadow: 0 0 30px rgba(0, 255, 0, 0.4); }
+            100% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.2); }
+        }
+
+        .login-form-3d {
+            font-family: 'Share Tech Mono', monospace;
+            background: rgba(0, 20, 0, 0.5);
+            border: 1px solid #0f0;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 400px;
+            transform-style: preserve-3d;
+            animation: float 6s ease-in-out infinite;
+            transform: rotateY(10deg) rotateX(10deg);
+        }
+
+        @keyframes float {
+            0% {
+                transform: rotateX(2deg) rotateY(2deg);
+            }
+            50% {
+                transform: rotateX(-2deg) rotateY(-2deg);
+            }
+            100% {
+                transform: rotateX(2deg) rotateY(2deg);
+            }
+        }
+
+        .form-group {
+            transform-style: preserve-3d;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            transform: translateZ(20px);
+            transition: transform 0.3s ease;
+            background: rgba(0, 20, 0, 0.3) !important;
+            border: 1px solid #0f0 !important;
+            color: #0f0 !important;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 1px;
+        }
+
+        .form-control::placeholder {
+            color: rgba(0, 255, 0, 0.5) !important;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .form-control:focus {
+            transform: translateZ(30px);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3) !important;
+            background: rgba(0, 40, 0, 0.4) !important;
+        }
+
+        .btn-gradient {
+            transform: translateZ(25px);
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #003300, #006600);
+            border: 1px solid #0f0;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px #0f0;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 0, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: glowScan 2s linear infinite;
+        }
+
+        @keyframes glowScan {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .btn-gradient:hover {
+            transform: translateZ(35px) scale(1.05);
+            background: linear-gradient(45deg, #006600, #009900);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        /* Thêm hiệu ứng 3D cho các element khác */
+        .form-check {
+            transform: translateZ(15px);
+        }
+
+        .text-center a {
+            transform: translateZ(15px);
+            display: inline-block;
+            color: #0f0 !important;
+            text-decoration: none;
+            font-family: 'Share Tech Mono', monospace;
+            position: relative;
+        }
+
+        .text-center a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 100%;
+            height: 1px;
+            background: #0f0;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .text-center a:hover::after {
+            transform: scaleX(1);
+        }
+
+        h2 {
+            transform: translateZ(40px);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            color: #0f0 !important;
+            text-shadow: 0 0 10px #0f0;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 2px;
+        }
+
+        h2 i {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .input-group-text {
+            background: transparent !important;
+            border-color: #0f0 !important;
+            color: #0f0 !important;
+            border-right: none;
+        }
+
+        .form-control {
+            background: rgba(0, 20, 0, 0.3) !important;
+            border: 1px solid #0f0 !important;
+            color: #0f0 !important;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 1px;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3) !important;
+            background: rgba(0, 40, 0, 0.4) !important;
+        }
+
+        .form-control::placeholder {
+            color: rgba(0, 255, 0, 0.5) !important;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(45deg, #003300, #006600);
+            border: 1px solid #0f0;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px #0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 0, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: glowScan 2s linear infinite;
+        }
+
+        @keyframes glowScan {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .btn-gradient:hover {
+            background: linear-gradient(45deg, #006600, #009900);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        .form-check-label {
+            color: #0f0 !important;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .form-check-input {
+            background-color: transparent;
+            border-color: #0f0;
+        }
+
+        .form-check-input:checked {
+            background-color: #0f0;
+            border-color: #0f0;
+        }
+
+        .text-center a {
+            color: #0f0 !important;
+            text-decoration: none;
+            font-family: 'Share Tech Mono', monospace;
+            position: relative;
+        }
+
+        .text-center a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 100%;
+            height: 1px;
+            background: #0f0;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .text-center a:hover::after {
+            transform: scaleX(1);
+        }
+
+        .invalid-feedback {
+            color: #ff3333 !important;
+            font-family: 'Share Tech Mono', monospace;
+            text-shadow: 0 0 5px #ff0000;
+        }
+
+        /* Thêm hiệu ứng hover cho container */
+        .login-container:hover .login-form-3d {
+            animation-play-state: paused;
+            transform: rotateY(0deg) rotateX(0deg);
+        }
+
+        /* Thêm style cho icon */
+        .hacker-icon {
+            font-size: 4rem;
+            color: #0f0;
+            text-shadow: 0 0 15px #0f0;
+            margin-bottom: 1rem;
+            animation: iconPulse 2s infinite;
+        }
+
+        .hacker-icon i {
+            background: linear-gradient(45deg, #0f0, #006600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 5px rgba(0, 255, 0, 0.5));
+        }
+
+        @keyframes iconPulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+        }
+
+        /* Thêm styles cho welcome screen */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .welcome-text {
+            text-align: center;
+            color: #0f0;
+            font-family: 'Share Tech Mono', monospace;
+            opacity: 0;
+        }
+
+        .welcome-text.active {
+            animation: welcomeReveal 3s forwards;
+        }
+
+        @keyframes welcomeReveal {
+            0% {
+                opacity: 0;
+                transform: perspective(1000px) rotateX(-90deg) translateY(100px);
+                text-shadow: 0 0 50px #0f0;
+            }
+            50% {
+                opacity: 0.5;
+                transform: perspective(1000px) rotateX(-45deg) translateY(50px);
+                text-shadow: 0 0 100px #0f0;
+            }
+            100% {
+                opacity: 1;
+                transform: perspective(1000px) rotateX(0deg) translateY(0);
+                text-shadow: 0 0 20px #0f0;
+            }
+        }
+
+        .text-3d {
+            color: #0f0;
+            text-shadow: 
+                0 0 10px #0f0,
+                1px 1px 0 #006600,
+                2px 2px 0 #006600,
+                3px 3px 0 #006600,
+                4px 4px 0 #006600;
+            letter-spacing: 4px;
+            transform: perspective(1000px) rotateX(20deg);
+        }
+
+        /* Thêm style cho connecting message */
+        .connecting-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            color: #0f0;
+            font-family: 'Share Tech Mono', monospace;
+            text-shadow: 0 0 5px #0f0;
+            z-index: 1000;
+        }
+
+        .connecting-message i {
+            display: block;
+            margin-bottom: 1rem;
+            color: #0f0;
+            text-shadow: 0 0 10px #0f0;
+        }
+
+        .connecting-message p {
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes formVanish {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.95);
+            }
+        }
+
+        .fade-out {
+            animation: formVanish 2s forwards;
+        }
+
+        .dashboard-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            background: rgba(0, 20, 0, 0.9);
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 20px;
+            height: 100%;
+        }
+
+        .dashboard-item {
+            background: rgba(0, 30, 0, 0.8);
+            border: 1px solid #0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .window-header {
+            background: rgba(0, 40, 0, 0.9);
+            padding: 10px;
+            color: #0f0;
+            font-family: 'Share Tech Mono', monospace;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .window-controls span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 5px;
+            background: #0f0;
+            opacity: 0.5;
+        }
+
+        /* Terminal Styles */
+        .terminal {
+            grid-row: span 2;
+        }
+
+        .terminal-content {
+            padding: 15px;
+            height: calc(100% - 40px);
+            background: rgba(0, 0, 0, 0.9);
+            font-family: 'Share Tech Mono', monospace;
+            color: #0f0;
+        }
+
+        .command-line {
+            display: flex;
+            gap: 10px;
+        }
+
+        .cursor {
+            animation: blink 1s infinite;
+        }
+
+        /* Stats Styles */
+        .stats-content {
+            padding: 15px;
+        }
+
+        .stat-item {
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background: rgba(0, 40, 0, 0.5);
+            border: 1px solid #0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #0f0, #00ff00);
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+
+        /* Network Map Styles */
+        .map-content {
+            height: calc(100% - 40px);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Process List Styles */
+        .process-list {
+            padding: 15px;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+        }
+
+        .process-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+            color: #0f0;
+            font-family: 'Share Tech Mono', monospace;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        /* Animation Classes */
+        .dashboard-show {
+            animation: dashboardReveal 1s forwards;
+        }
+
+        .item-reveal {
+            animation: itemReveal 0.5s forwards;
+        }
+
+        @keyframes dashboardReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes itemReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-form-3d">
+            <div class="connecting-message" style="display: none;">
+                <div class="text-center">
+                    <i class="fas fa-circle-notch fa-spin fa-2x mb-3"></i>
+                    <p>ESTABLISHING SECURE CONNECTION...</p>
+                </div>
+            </div>
+            <div class="form-content">
+                <div class="hacker-icon text-center mb-4">
+                    <i class="fas fa-user-secret"></i>
+                </div>
+                <h2 class="text-center mb-4">
+                    <i class="fas fa-terminal me-2"></i>SYSTEM LOGIN
+                </h2>
+                <form class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-user-shield"></i>
+                            </span>
+                            <input type="text" class="form-control" placeholder="ENTER USERNAME" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-key"></i>
+                            </span>
+                            <input type="password" class="form-control" placeholder="ENTER PASSWORD" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember">
+                        <label class="form-check-label" for="remember">REMEMBER ACCESS</label>
+                    </div>
+                    <button type="submit" class="btn btn-gradient w-100">
+                        <i class="fas fa-sign-in-alt me-2"></i>INITIALIZE LOGIN
+                    </button>
+                    <div class="text-center mt-3">
+                        <a href="#" class="text-decoration-none">
+                            <i class="fas fa-sync-alt me-2"></i>RESET ACCESS CODE
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thêm div cho màn hình welcome ngay sau login-container -->
+    <div class="welcome-screen" style="display: none;">
+        <div class="welcome-text">
+            <h1 class="text-3d">ACCESS GRANTED</h1>
+            <p class="text-3d">WELCOME TO THE SYSTEM</p>
+        </div>
+        <div class="dashboard-container" style="display: none;">
+            <div class="dashboard-grid">
+                <!-- Terminal Window -->
+                <div class="dashboard-item terminal">
+                    <div class="window-header">
+                        <i class="fas fa-terminal"></i> Terminal
+                        <div class="window-controls">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <div class="terminal-content">
+                        <div class="terminal-text"></div>
+                        <div class="command-line">
+                            <span class="prompt">root@system:~$</span>
+                            <span class="cursor">█</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Stats -->
+                <div class="dashboard-item stats">
+                    <div class="window-header">
+                        <i class="fas fa-chart-line"></i> System Stats
+                    </div>
+                    <div class="stats-content">
+                        <div class="stat-item">
+                            <label>CPU Usage</label>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <label>Memory</label>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <label>Network</label>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Network Map -->
+                <div class="dashboard-item network-map">
+                    <div class="window-header">
+                        <i class="fas fa-project-diagram"></i> Network Map
+                    </div>
+                    <div class="map-content">
+                        <canvas id="networkCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- Active Processes -->
+                <div class="dashboard-item processes">
+                    <div class="window-header">
+                        <i class="fas fa-microchip"></i> Active Processes
+                    </div>
+                    <div class="process-list">
+                        <!-- Processes will be added dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.137.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        // Three.js setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.insertBefore(renderer.domElement, document.body.firstChild);
+
+        // Tạo canvas cho texture
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 32;
+        canvas.height = 32;
+
+        // Tạo texture cho các ký tự Matrix
+        const matrixChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$@#%&*";
+        const textures = [];
+        
+        for (let i = 0; i < matrixChars.length; i++) {
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = 32;
+            tempCanvas.height = 32;
+            
+            tempCtx.clearRect(0, 0, 32, 32);
+            
+            tempCtx.font = '24px "Share Tech Mono"';
+            tempCtx.fillStyle = '#0f0';
+            tempCtx.textAlign = 'center';
+            tempCtx.textBaseline = 'middle';
+            tempCtx.fillText(matrixChars[i], 16, 16);
+            
+            const texture = new THREE.Texture(tempCanvas);
+            texture.needsUpdate = true;
+            textures.push(texture);
+        }
+
+        // Tạo particles
+        const particlesCount = 5000;
+        const positions = new Float32Array(particlesCount * 3);
+        const materials = [];
+        const particles = [];
+
+        for (let i = 0; i < particlesCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 20;     // x
+            positions[i * 3 + 1] = Math.random() * 20 - 10;    // y
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 20; // z
+
+            const material = new THREE.PointsMaterial({
+                size: 0.3,
+                map: textures[Math.floor(Math.random() * textures.length)],
+                transparent: true,
+                opacity: Math.random() * 0.8 + 0.2,
+                depthWrite: false,
+                blending: THREE.AdditiveBlending
+            });
+
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute([positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]], 3));
+            
+            const particle = new THREE.Points(geometry, material);
+            particles.push(particle);
+            scene.add(particle);
+            materials.push(material);
+        }
+
+        camera.position.z = 5;
+
+        // OrbitControls setup
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.screenSpacePanning = false;
+        controls.minDistance = 1;
+        controls.maxDistance = 10;
+        controls.maxPolarAngle = Math.PI / 1.5;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.5;
+
+        // Thêm biến để kiểm soát animation
+        let isWelcomeMode = false;
+        let welcomeStartTime = 0;
+
+        // Sửa hàm animate để thêm hiệu ứng welcome
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const time = Date.now() * 0.0005;
+            
+            if (isWelcomeMode) {
+                const elapsed = Date.now() - welcomeStartTime;
+                
+                // Animation cho particles khi ở chế độ welcome
+                particles.forEach((particle, index) => {
+                    // Tạo hiệu ứng xoáy
+                    const angle = (index / particlesCount) * Math.PI * 2;
+                    const radius = 5 + Math.sin(time * 2) * 2;
+                    
+                    particle.position.x = Math.cos(angle + time) * radius;
+                    particle.position.y = Math.sin(time * 2) * 2;
+                    particle.position.z = Math.sin(angle + time) * radius;
+                    
+                    // Xoay particles
+                    particle.rotation.z += 0.02;
+                    
+                    // Đổi màu theo thời gian
+                    const hue = (time * 50) % 360;
+                    materials[index].color.setHSL(hue / 360, 1, 0.5);
+                });
+                
+                // Camera xoay nhanh hơn trong chế độ welcome
+                camera.position.x = Math.cos(time) * 8;
+                camera.position.z = Math.sin(time) * 8;
+                camera.lookAt(scene.position);
+            } else {
+                // Animation gốc cho particles
+                particles.forEach((particle, index) => {
+                    particle.position.y -= 0.02;
+                    if (particle.position.y < -10) {
+                        particle.position.y = 10;
+                        materials[index].map = textures[Math.floor(Math.random() * textures.length)];
+                        materials[index].opacity = Math.random() * 0.8 + 0.2;
+                    }
+                    particle.position.x += Math.sin(time + index) * 0.001;
+                    particle.position.z += Math.cos(time + index) * 0.001;
+                    particle.rotation.z += 0.01;
+                });
+            }
+            
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Window resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            controls.update();
+        });
+
+        // Mouse move effect
+        document.addEventListener('mousemove', (event) => {
+            const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+            particles.forEach((particle) => {
+                particle.rotation.x += mouseY * 0.0001;
+                particle.rotation.y += mouseX * 0.0001;
+            });
+        });
+
+        // Form validation
+        (() => {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation')
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+
+        // Thêm hiệu ứng di chuyển theo chuột
+        document.addEventListener('mousemove', (e) => {
+            const container = document.querySelector('.login-form-3d');
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            container.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        // Reset transform khi chuột rời khỏi container
+        document.querySelector('.login-container').addEventListener('mouseleave', () => {
+            const container = document.querySelector('.login-form-3d');
+            container.style.transform = 'rotateX(0) rotateY(0)';
+            container.style.transition = 'all 0.5s ease';
+        });
+
+        // Xóa transition khi chuột vào container
+        document.querySelector('.login-container').addEventListener('mouseenter', () => {
+            const container = document.querySelector('.login-form-3d');
+            container.style.transition = 'none';
+        });
+
+        // Sửa event listener form submission
+        document.querySelector('.needs-validation').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const formContent = document.querySelector('.form-content');
+            const connectingMessage = document.querySelector('.connecting-message');
+            const loginForm = document.querySelector('.login-form-3d');
+            
+            // Ẩn nội dung form và hiện connecting message
+            formContent.style.display = 'none';
+            connectingMessage.style.display = 'block';
+            
+            // Đợi 2 giây để hiển thị connecting message
+            setTimeout(() => {
+                // Thêm animation fade-out cho cả form
+                loginForm.classList.add('fade-out');
+                
+                // Sau khi animation kết thúc, hiện welcome screen
+                setTimeout(() => {
+                    document.querySelector('.login-container').style.display = 'none';
+                    const welcomeScreen = document.querySelector('.welcome-screen');
+                    welcomeScreen.style.display = 'flex';
+                    
+                    setTimeout(() => {
+                        const welcomeText = welcomeScreen.querySelector('.welcome-text');
+                        welcomeText.classList.add('active');
+                        
+                        // Sau khi hiện welcome text, hiện dashboard
+                        setTimeout(() => {
+                            const dashboard = document.querySelector('.dashboard-container');
+                            dashboard.style.display = 'block';
+                            dashboard.classList.add('dashboard-show');
+                            
+                            // Hiện lần lượt các dashboard items
+                            const items = document.querySelectorAll('.dashboard-item');
+                            items.forEach((item, index) => {
+                                setTimeout(() => {
+                                    item.classList.add('item-reveal');
+                                    if (item.classList.contains('terminal')) {
+                                        initializeTerminal(item);
+                                    } else if (item.classList.contains('stats')) {
+                                        initializeStats(item);
+                                    } else if (item.classList.contains('network-map')) {
+                                        initializeNetworkMap(item);
+                                    } else if (item.classList.contains('processes')) {
+                                        initializeProcesses(item);
+                                    }
+                                }, index * 200);
+                            });
+                            
+                            isWelcomeMode = true;
+                            welcomeStartTime = Date.now();
+                            controls.enabled = false;
+                        }, 2000);
+                    }, 500);
+                }, 2000);
+            }, 2000);
+        });
+
+        // Terminal Initialization
+        function initializeTerminal(terminal) {
+            const commands = [
+                'Initializing system...',
+                'Loading kernel modules...',
+                'Establishing secure connection...',
+                'Access granted to mainframe...',
+                'System ready.'
+            ];
+            
+            const terminalText = terminal.querySelector('.terminal-text');
+            commands.forEach((cmd, index) => {
+                setTimeout(() => {
+                    terminalText.innerHTML += `<div>> ${cmd}</div>`;
+                }, index * 500);
+            });
+        }
+
+        // Stats Initialization
+        function initializeStats(stats) {
+            const progressBars = stats.querySelectorAll('.progress');
+            progressBars.forEach(bar => {
+                const randomProgress = Math.floor(Math.random() * 60) + 40;
+                setTimeout(() => {
+                    bar.style.width = `${randomProgress}%`;
+                }, 100);
+            });
+        }
+
+        // Network Map Initialization
+        function initializeNetworkMap(mapContainer) {
+            const canvas = mapContainer.querySelector('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = mapContainer.clientWidth;
+            canvas.height = mapContainer.clientHeight;
+            
+            // Network node animation code here
+            // ... (можно добавить анимацию сети позже)
+        }
+
+        // Processes Initialization
+        function initializeProcesses(processContainer) {
+            const processes = [
+                'System Monitor',
+                'Network Scanner',
+                'Security Protocol',
+                'Data Encryption',
+                'Firewall'
+            ];
+            
+            const list = processContainer.querySelector('.process-list');
+            processes.forEach((process, index) => {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = 'process-item';
+                    div.innerHTML = `
+                        <span>${process}</span>
+                        <span>PID: ${Math.floor(Math.random() * 9000) + 1000}</span>
+                    `;
+                    list.appendChild(div);
+                    setTimeout(() => div.style.opacity = 1, 50);
+                }, index * 200);
+            });
+        }
+    </script>
+</body>
+</html>
