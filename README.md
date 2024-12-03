@@ -13,29 +13,6 @@ Dự án này nhằm tạo ra giao diện đẹp mắt và hiện đại cho tra
 
 ---
 
-## **Cách Sử Dụng**  
-
-### **1. Clone Repo**  
-```bash
-git clone [https://github.com/your-username/beautiful-ui.git](https://github.com/LvPhat2004/Login_Hacker-Template)
-cd beautiful-ui
-```
-
-### **2. Cài Đặt (Optional)**  
-Nếu dùng **Tailwind CSS**:  
-```bash
-npm install
-npm run build-css
-```
-
-### **3. Chạy Dự Án**  
-Mở tệp `index.html` trong trình duyệt:  
-```bash
-open index.html
-```
-
----
-
 ## **Công Nghệ Sử Dụng**  
 - **HTML5**: Xây dựng cấu trúc trang web.  
 - **CSS3**: Tạo hiệu ứng và giao diện đẹp mắt.  
