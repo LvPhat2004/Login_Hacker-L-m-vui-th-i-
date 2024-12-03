@@ -17,7 +17,7 @@ Dự án này nhằm tạo ra giao diện đẹp mắt và hiện đại cho tra
 
 ### **1. Clone Repo**  
 ```bash
-git clone https://github.com/your-username/beautiful-ui.git
+git clone [https://github.com/your-username/beautiful-ui.git](https://github.com/LvPhat2004/Login_Hacker-Template)
 cd beautiful-ui
 ```
 
